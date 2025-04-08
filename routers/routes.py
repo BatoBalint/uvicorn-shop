@@ -8,7 +8,7 @@ from typing import Dict, Any, List
 from data.filehandler import load_json as lj
 from data.filehandler import save_json as sj
 
-from data.filereader import get_all_users, get_user_by_id
+from data.filereader import get_all_users, get_user_by_id, get_basket_by_user_id, get_total_price_of_basket
 
 '''
 
@@ -50,9 +50,8 @@ def deleteitem(userid: int, itemid: int) -> Basket:
 def user(userid: int) -> JSONResponse:
     u = get_user_by_id(userid)
     if "error" in u:
-        raise HTTPException(status_code=404, detail=f"There was no user found with the given id ({userid})")
-    else:
-        return JSONResponse(content=u, status_code=200)
+        raise HTTPException(status_code=404, detail=f"There is no user with the received id (id: {userid})")
+    return JSONResponse(content=u, status_code=200)
 
 
 @routers.get('/users')
@@ -60,16 +59,13 @@ def users() -> JSONResponse:
     return JSONResponse(get_all_users(), status_code=200)
 
 @routers.get('/shoppingbag')
-def shoppingbag(userid: int) -> list[Item]:
-    pass
+def shoppingbag(userid: int) -> JSONResponse:
+    return JSONResponse(content=get_basket_by_user_id(userid))
 
 @routers.get('/getusertotal')
 def getusertotal(userid: int) -> float:
-    pass
+    return JSONResponse(content=get_total_price_of_basket(userid))
 
-@routers.get('/test')
-def getTestData() -> Dict[str, Any] | Any:
-    return {"Message": "Haiii :3"}
     
 
 

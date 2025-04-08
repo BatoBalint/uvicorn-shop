@@ -61,10 +61,21 @@ def get_user_by_id(user_id: int) -> Dict[str, Any]:
     return {"error": "User not found"}
 
 def get_basket_by_user_id(user_id: int) -> List[Dict[str, Any]]:
-    pass
+    baskets = load_json().get("Baskets", [])
+    for basket in baskets:
+        if basket.get("user_id") == user_id:
+            return basket.get("items", [])
+    return {"error": "Users basket not found"}
 
 def get_all_users() -> List[Dict[str, Any]]:
     return load_json().get("Users", [])
 
 def get_total_price_of_basket(user_id: int) -> float:
-    pass
+    basket = get_basket_by_user_id(user_id)
+    if "error" in basket:
+        return 0
+
+    sum = 0
+    for item in basket:
+        sum += item.get("price", 0)
+    return sum

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, NonNegativeInt
+from pydantic import BaseModel, EmailStr, NonNegativeInt, NonNegativeFloat, PositiveInt
 
 '''
 
@@ -22,8 +22,14 @@ class User(BaseModel):
     name: str
     email: EmailStr
 
-class Basket(BaseModel):
-    pass
-
 class Item(BaseModel):
-    pass
+    item_id: NonNegativeInt
+    name: str
+    brand: str
+    price: NonNegativeFloat
+    quantity: PositiveInt
+
+class Basket(BaseModel):
+    id: NonNegativeInt
+    user_id: NonNegativeInt
+    items: list[Item]
