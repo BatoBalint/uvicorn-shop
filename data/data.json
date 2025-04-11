@@ -14,6 +14,16 @@
             "id": 3,
             "name": "Körtés Károly",
             "email": "karoly@pearparadise.com"
+        },
+        {
+            "id": 0,
+            "name": "string",
+            "email": "user@example.com"
+        },
+        {
+            "id": 4,
+            "name": "string",
+            "email": "user@example.com"
         }
     ],
     "Baskets": [
@@ -61,6 +71,24 @@
             "id": 103,
             "user_id": 3,
             "items": []
+        },
+        {
+            "id": 104,
+            "user_id": 0,
+            "items": []
+        },
+        {
+            "id": 105,
+            "user_id": 5,
+            "items": [
+                {
+                    "item_id": 0,
+                    "name": "string",
+                    "brand": "string",
+                    "price": 0.0,
+                    "quantity": 1
+                }
+            ]
         }
     ]
 }

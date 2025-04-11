@@ -5,10 +5,9 @@ from fastapi import APIRouter
 from pydantic import ValidationError
 
 from typing import Dict, Any, List
-from data.filehandler import load_json as lj
-from data.filehandler import save_json as sj
 
-from data.filereader import get_all_users, get_user_by_id, get_basket_by_user_id, get_total_price_of_basket
+import data.filereader as reader
+import data.filehandler as handler
 
 '''
 
@@ -28,15 +27,39 @@ routers = APIRouter()
 
 @routers.post('/adduser', response_model=User)
 def adduser(user: User) -> User:
-    pass
+    try:
+        handler.add_user(user.model_dump())
+        return user
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Could not add user")
+    
 
 @routers.post('/addshoppingbag')
 def addshoppingbag(userid: int) -> str:
-    pass
+    b = Basket(id=0, user_id=userid, items=[])
+    try:
+        handler.add_basket(b)
+        return "Sikeres kosár hozzárendelés."
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Could not add basket")
 
 @routers.post('/additem', response_model=Basket)
 def additem(userid: int, item: Item) -> Basket:
-    pass
+    data = handler.load_json()                      # get baskets
+    baskets = data.get("Baskets", [])
+    basket = {}
+    for b in baskets:                               # find users basket
+        if b["user_id"] == userid:
+            basket = b
+            items = b.get("items", [])
+            items.append(item.model_dump())
+            b["items"] = items
+    if "user_id" in basket.keys():                  # if basket was found it will have a user_id key
+        handler.add_item_to_basket(userid, item)    # store the new basket in the file
+        return basket
+    raise HTTPException(status_code=422, detail="Could not add item to basket")
+        
+    
 
 @routers.put('/updateitem')
 def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
@@ -49,26 +72,26 @@ def deleteitem(userid: int, itemid: int) -> Basket:
 @routers.get('/user')
 def user(userid: int) -> User:
     try:
-        return get_user_by_id(userid)
+        return reader.get_user_by_id(userid)
     except ValueError:
-        raise HTTPException(status_code=404, detail=f"There is no user with the received id (id: {userid})")
+        raise HTTPException(status_code=422, detail=f"There is no user with the received id (id: {userid})")
 
 
 @routers.get('/users')
 def users() -> list[User]:
-    return get_all_users()
+    return reader.get_all_users()
 
 @routers.get('/shoppingbag')
 def shoppingbag(userid: int) -> list[Item]:
     try:
-        return get_basket_by_user_id(userid)
+        return reader.get_basket_by_user_id(userid)
     except ValueError:
         raise HTTPException(status_code=422, detail=f"Couldn't find a basket for this user (userid: {userid})")
 
 @routers.get('/getusertotal')
 def getusertotal(userid: int) -> float:
     try:
-        return get_total_price_of_basket(userid)
+        return reader.get_total_price_of_basket(userid)
     except ValueError:
         raise HTTPException(status_code=422, detail=f"Couldn't find a basket for this user (userid: {userid})")
 
