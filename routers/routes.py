@@ -45,13 +45,13 @@ def addshoppingbag(userid: int) -> str:
 
 @routers.post('/additem', response_model=Basket)
 def additem(userid: int, item: Item) -> Basket:
-    data = handler.load_json()                      # get baskets
-    baskets = data.get("Baskets", [])
-    basket = {}
+    data: Dict[str, Any] = handler.load_json()                      # get baskets
+    baskets: list[Dict[str, Any]] = data.get("Baskets", [])
+    basket: Dict[str, Any] = {}
     for b in baskets:                               # find users basket
         if b["user_id"] == userid:
             basket = b
-            items = b.get("items", [])
+            items: list[Dict[str, Any]] = b.get("items", [])
             items.append(item.model_dump())
             b["items"] = items
     if "user_id" in basket.keys():                  # if basket was found it will have a user_id key
@@ -63,14 +63,14 @@ def additem(userid: int, item: Item) -> Basket:
 
 @routers.put('/updateitem')
 def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
-    data = handler.load_json()                                      # get baskets
-    baskets = data.get("Baskets", [])
-    basket = {}
-    item = {}
+    data: Dict[str, Any] = handler.load_json()                                      # get baskets
+    baskets: list[Dict[str, Any]] = data.get("Baskets", [])
+    basket: Dict[str, Any] = {}
+    item: Dict[str, Any] = {}
     for b in baskets:                                               # find users basket
         if b["user_id"] == userid:
             basket = b
-            items = b.get("items", [])
+            items: list[Dict[str, Any]] = b.get("items", [])
             for i in range(0, len(items)):
                 if items[i]["item_id"] == itemid:                   # find item
                     item = items[i]
@@ -84,14 +84,14 @@ def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
 
 @routers.delete('/deleteitem')
 def deleteitem(userid: int, itemid: int) -> Basket:
-    data = handler.load_json()                                      # get baskets
-    baskets = data.get("Baskets", [])
-    basket = {}
-    item = {}
+    data: Dict[str, Any] = handler.load_json()                                      # get baskets
+    baskets: list[Dict[str, Any]] = data.get("Baskets", [])
+    basket: list[Dict[str, Any]] = {}
+    item: Dict[str, Any] = {}
     for b in baskets:                                               # find users basket
         if b["user_id"] == userid:
             basket = b
-            items = b.get("items", [])
+            items: list[Dict[str, Any]] = b.get("items", [])
             for i in range(0, len(items)):
                 if items[i]["item_id"] == itemid:                   # find item
                     item = items[i]                                 # save item that should be removed

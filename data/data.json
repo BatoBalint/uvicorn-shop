@@ -24,6 +24,16 @@
             "id": 4,
             "name": "string",
             "email": "user@example.com"
+        },
+        {
+            "id": 5,
+            "name": "string",
+            "email": "user@example.com"
+        },
+        {
+            "id": 6,
+            "name": "stringagain",
+            "email": "user@example2.com"
         }
     ],
     "Baskets": [
@@ -70,6 +80,11 @@
         {
             "id": 103,
             "user_id": 3,
+            "items": []
+        },
+        {
+            "id": 104,
+            "user_id": 6,
             "items": []
         }
     ]

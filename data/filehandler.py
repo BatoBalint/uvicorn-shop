@@ -1,8 +1,6 @@
 import json
 from typing import Dict, Any
 
-
-
 '''
 Útmutató a fájl függvényeinek a használatához
 
@@ -62,12 +60,12 @@ from filehandler import (
 JSON_FILE_PATH = "data/data.json"
 
 def load_json() -> Dict[str, Any]:
-    d = Dict[str, Any]
+    d: Dict[str, Any] = {}
     try:
         with open(JSON_FILE_PATH, "r", encoding="utf-8") as file:
             d = json.load(file)
     except: 
-        return Dict[str, Any]()
+        pass
     return d
 
 def save_json(data: Dict[str, Any]) -> None:
@@ -75,10 +73,8 @@ def save_json(data: Dict[str, Any]) -> None:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 def add_user(user: Dict[str, Any]) -> None:
-    data = load_json()
-    users = data.get("Users", [])
-    data = load_json()
-    users = data.get("Users", [])
+    data: Dict[str, Any] = load_json()
+    users: list[Dict[str, Any]] = data.get("Users", [])
     for u in users:
         if u.get("id", user.get("id")) == user.get("id"):
             raise ValueError()
@@ -86,27 +82,26 @@ def add_user(user: Dict[str, Any]) -> None:
     data["Users"] = users
     save_json(data)
 
-
 def add_basket(basket: Dict[str, Any]) -> None:
-    data = load_json()                  # get baskets
-    baskets = data.get("Baskets", [])
-    maxind: int = 0                     # find largest id
+    data: Dict[str, Any] = load_json()                      # get baskets
+    baskets: list[Dict[str, Any]] = data.get("Baskets", [])
+    maxind: int = 0                                         # find largest id
     for b in baskets:
         if int(b["id"]) > maxind:
             maxind = int(b["id"])
-    basket.id = maxind + 1              # set new id for basket
-    baskets.append(basket.model_dump()) # save basket
+    basket.id = maxind + 1                                  # set new id for basket
+    baskets.append(basket.model_dump())                     # save basket
     data["Baskets"] = baskets
-    save_json(data)                     # write new data to file
+    save_json(data)                                         # write new data to file
 
 def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
-    data = load_json()                              # get baskets
-    baskets = data.get("Baskets", [])
-    for i in range(0, len(baskets)):                # update users all baskets
+    data: Dict[str, Any] = load_json()                      # get baskets
+    baskets: list[Dict[str, Any]] = data.get("Baskets", [])
+    for i in range(0, len(baskets)):                        # update users all baskets
         if baskets[i]["user_id"] == user_id:
             items = baskets[i].get("items", [])
             items.append(item.model_dump())
             baskets[i]["items"] = items
     data["Baskets"] = baskets
-    save_json(data)                                 # write new data to file
+    save_json(data)                                         # write new data to file
     

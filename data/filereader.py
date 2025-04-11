@@ -47,21 +47,23 @@ from filereader import (
 JSON_FILE_PATH = "data/data.json"
 
 def load_json() -> Dict[str, Any]:
+    d: Dict[str, Any] = {}
     try:
         with open(JSON_FILE_PATH, "r", encoding="utf-8") as file:
-            return json.load(file)
-    except Exception as e:
-        return {}
+            d = json.load(file)
+    except: 
+        pass
+    return d
 
 def get_user_by_id(user_id: int) -> Dict[str, Any]:
-    users = load_json().get("Users", [])
+    users: list[Dict[str, Any]] = load_json().get("Users", [])
     for user in users:
         if user.get("id") == user_id:
             return user
     raise ValueError()
 
 def get_basket_by_user_id(user_id: int) -> List[Dict[str, Any]]:
-    baskets = load_json().get("Baskets", [])
+    baskets: list[Dict[str, Any]] = load_json().get("Baskets", [])
     for basket in baskets:
         if basket.get("user_id") == user_id:
             return basket.get("items", [])
@@ -71,11 +73,11 @@ def get_all_users() -> List[Dict[str, Any]]:
     return load_json().get("Users", [])
 
 def get_total_price_of_basket(user_id: int) -> float:
-    basket = get_basket_by_user_id(user_id)
+    basket: List[Dict[str, Any]] = get_basket_by_user_id(user_id)
     if "error" in basket:
         raise ValueError()
 
-    sum = 0
+    sum: int = 0
     for item in basket:
         sum += item.get("price", 0)
     return sum
