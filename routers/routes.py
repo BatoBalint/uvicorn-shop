@@ -63,11 +63,45 @@ def additem(userid: int, item: Item) -> Basket:
 
 @routers.put('/updateitem')
 def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
-    pass
+    data = handler.load_json()                                      # get baskets
+    baskets = data.get("Baskets", [])
+    basket = {}
+    item = {}
+    for b in baskets:                                               # find users basket
+        if b["user_id"] == userid:
+            basket = b
+            items = b.get("items", [])
+            for i in range(0, len(items)):
+                if items[i]["item_id"] == itemid:                   # find item
+                    item = items[i]
+                    items[i] = updateItem.model_dump()              # update item
+            b["items"] = items
+    if "user_id" in basket.keys() and "item_id" in item.keys():     # if basket and item was found it will have a user_id and item_id key    
+        data["Baskets"] = baskets
+        handler.save_json(data)  
+        return basket
+    raise HTTPException(status_code=422, detail="Could not update item")
 
 @routers.delete('/deleteitem')
 def deleteitem(userid: int, itemid: int) -> Basket:
-    pass
+    data = handler.load_json()                                      # get baskets
+    baskets = data.get("Baskets", [])
+    basket = {}
+    item = {}
+    for b in baskets:                                               # find users basket
+        if b["user_id"] == userid:
+            basket = b
+            items = b.get("items", [])
+            for i in range(0, len(items)):
+                if items[i]["item_id"] == itemid:                   # find item
+                    item = items[i]                                 # save item that should be removed
+            if "item_id" in item.keys(): items.remove(item)         # remove item if it was found
+            b["items"] = items
+    if "user_id" in basket.keys() and "item_id" in item.keys():     # if basket and item was found it will have a user_id and item_id key    
+        data["Baskets"] = baskets
+        handler.save_json(data)  
+        return basket
+    raise HTTPException(status_code=422, detail="Could not delete item")
 
 @routers.get('/user')
 def user(userid: int) -> User:
