@@ -47,24 +47,30 @@ def deleteitem(userid: int, itemid: int) -> Basket:
     pass
 
 @routers.get('/user')
-def user(userid: int) -> JSONResponse:
-    u = get_user_by_id(userid)
-    if "error" in u:
+def user(userid: int) -> User:
+    try:
+        return get_user_by_id(userid)
+    except ValueError:
         raise HTTPException(status_code=404, detail=f"There is no user with the received id (id: {userid})")
-    return JSONResponse(content=u, status_code=200)
 
 
 @routers.get('/users')
-def users() -> JSONResponse:
-    return JSONResponse(get_all_users(), status_code=200)
+def users() -> list[User]:
+    return get_all_users()
 
 @routers.get('/shoppingbag')
-def shoppingbag(userid: int) -> JSONResponse:
-    return JSONResponse(content=get_basket_by_user_id(userid))
+def shoppingbag(userid: int) -> list[Item]:
+    try:
+        return get_basket_by_user_id(userid)
+    except ValueError:
+        raise HTTPException(status_code=422, detail=f"Couldn't find a basket for this user (userid: {userid})")
 
 @routers.get('/getusertotal')
 def getusertotal(userid: int) -> float:
-    return JSONResponse(content=get_total_price_of_basket(userid))
+    try:
+        return get_total_price_of_basket(userid)
+    except ValueError:
+        raise HTTPException(status_code=422, detail=f"Couldn't find a basket for this user (userid: {userid})")
 
     
 
